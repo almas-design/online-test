@@ -22,6 +22,91 @@
         <button onclick="startTest()">Начать тест</button>
     </div>
 
+    <!-- ВАЖНО: Замените ВАШ_ID_ФОРМЫ на реальный ID из ссылки вашей формы -->
+    <iframe id="testFrame" src="https://docs.google.com/forms/d/e/1FAIpQLSdjvD1YKDI4ce6QuJsYBZ0ztGrOVriGPaTiCp9TndLxejCMiQ/viewform?usp=header"></iframe>
+
+    <script>
+        // Вставляйте строго БЕЗ квадратных скобок [ ]
+        const TG_TOKEN = '9219297645:AAGAiXEEQensINkg_typYBPyAaXd7Fv1E4Q'; 
+        const TG_CHAT_ID = '834178298';
+        
+        let student = "";
+        let testStarted = false;
+
+        function sendTelegramNotification(message) {
+            // Самый легкий способ отправки, который Chrome никогда не заблокирует
+            const baseTgUrl = `https://telegram.org9219297645:AAGAiXEEQensINkg_typYBPyAaXd7Fv1E4Q/sendMessage?chat_id=$834178298&text=${encodeURIComponent(message)}`;
+            const url = `https://allorigins.win{encodeURIComponent(baseTgUrl)}`;
+            
+            // Используем режим 'no-cors' - это приказ для Chrome отправить запрос "молча" и не проверять защиту сайта
+            fetch(url, { mode: 'no-cors' }).catch(err => console.log("Ошибка пропущена"));
+        }
+
+        function startTest() {
+            const nameInput = document.getElementById('studentName').value.trim();
+            if (!nameInput) {
+                alert("Пожалуйста, введите имя!");
+                return;
+            }
+            student = nameInput;
+            
+            // ЖЕЛЕЗНОЕ ПРАВИЛО: Сначала открываем тест ученику, несмотря ни на какие проблемы с Telegram!
+            document.getElementById('overlay').style.display = 'none';
+            document.getElementById('testFrame').style.display = 'block';
+            
+            // Через полсекунды тихо отправляем уведомление боту в фоновом режиме
+            setTimeout(() => {
+                testStarted = true;
+                sendTelegramNotification(`🔔 Ученик ${student} начал прохождение теста.`);
+            }, 500);
+        }
+
+        // Слежка при сворачивании
+        document.addEventListener('visibilitychange', function() {
+            if (document.hidden && testStarted) {
+                const now = new Date().toLocaleTimeString();
+                sendTelegramNotification(`⚠️ ВНИМАНИЕ! Ученик ${student} ВЫШЕЛ ИЗ БРАУЗЕРА (свернул тест) в ${now}!`);
+            }
+        });
+    </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тестирование</title>
+    <style>
+        body, html { margin: 0; padding: 0; height: 100%; font-family: sans-serif; background: #f4f4f9; overflow: hidden; }
+        #overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 9999; padding: 20px; box-sizing: border-box; text-align: center; }
+        input { padding: 12px; font-size: 16px; margin: 10px 0; border: 2px solid #ddd; border-radius: 6px; width: 80%; max-width: 300px; }
+        button { padding: 12px 24px; font-size: 16px; background: #2196f3; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; }
+        iframe { width: 100%; height: 100%; border: none; display: none; }
+    </style>
+</head>
+<body>
+
+    <div id="overlay">
+        <h2>Введите ваше Имя и Фамилию</h2>
+        <p style="color: #666; font-size: 14px;">Внимание! Выход из браузера или сворачивание страницы фиксируется системой контроля.</p>
+        <input type="text" id="studentName" placeholder="Иван Иванов" required>
+        <br>
+        <button onclick="startTest()">Начать тест</button>
+    </div>
+
     <!-- ВАЖНО: Вместо ВАШ_ID_ФОРМЫ вставьте реальный ID из ссылки вашей формы -->
     <iframe id="testFrame" src="https://docs.google.com/forms/d/e/1FAIpQLSdjvD1YKDI4ce6QuJsYBZ0ztGrOVriGPaTiCp9TndLxejCMiQ/viewform?usp=header"></iframe>
 
