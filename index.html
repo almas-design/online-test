@@ -23,31 +23,30 @@
         <button onclick="startTest()">Начать тест</button>
     </div>
 
-    <!-- Тест во фрейме (Важно: ссылка должна заканчиваться на embedded=true) -->
+    <!-- Тест во фрейме (Ссылка ОБЯЗАТЕЛЬНО должна быть для встраивания c embedded=true) -->
     <iframe id="testFrame" src="https://docs.google.com/forms/d/e/1FAIpQLSdjvD1YKDI4ce6QuJsYBZ0ztGrOVriGPaTiCp9TndLxejCMiQ/viewform?usp=header"></iframe>
 
     <script>
-        // Укажите ваши точные данные без слова "bot" в токене
+        // Вставляйте строго БЕЗ квадратных скобок [ ]
         const TG_TOKEN = '9219297645:AAGAiXEEQensINkg_typYBPyAaXd7Fv1E4Q'; 
         const TG_CHAT_ID = '834178298';
+        
         let student = "";
         let testStarted = false;
 
-     function sendTelegramNotification(message) {
-    // Используем прокси для обхода блокировок api.telegram.org
-    const url = `https://allorigins.win{encodeURIComponent(`https://telegram.org{TG_TOKEN}/sendMessage?chat_id=${TG_CHAT_ID}&text=${encodeURIComponent(message)}`)}`;
-    
-    fetch(url)
-        .then(response => {
-            if (response.ok) return response.json();
-            throw new Error('Ошибка сети');
-        })
-        .then(data => {
-            console.log("Ответ сервера:", data);
-        })
-        .catch(err => console.error("Ошибка отправки в TG через прокси:", err));
-}
-
+        function sendTelegramNotification(message) {
+            // Запрос через прокси AllOrigins, чтобы обойти блокировки провайдеров
+            const baseTgUrl = `https://telegram.org{TG_TOKEN}/sendMessage?chat_id=${TG_CHAT_ID}&text=${encodeURIComponent(message)}`;
+            const proxyUrl = `https://allorigins.win{encodeURIComponent(baseTgUrl)}`;
+            
+            fetch(proxyUrl)
+                .then(response => {
+                    if (!response.ok) throw new Error('Ошибка сети');
+                    return response.json();
+                })
+                .then(data => console.log("Уведомление успешно отправлено:", data))
+                .catch(err => console.error("Ошибка отправки в Telegram:", err));
+        }
 
         function startTest() {
             const nameInput = document.getElementById('studentName').value.trim();
@@ -58,9 +57,11 @@
             student = nameInput;
             testStarted = true;
             
+            // Скрываем окно регистрации и показываем фрейм с тестом
             document.getElementById('overlay').style.display = 'none';
             document.getElementById('testFrame').style.display = 'block';
             
+            // Отправляем уведомление о начале (обратите внимание на правильные кавычки ` `)
             sendTelegramNotification(`🔔 Ученик ${student} начал прохождение теста.`);
         }
 
