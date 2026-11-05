@@ -33,19 +33,32 @@
         let student = "";
         let testStarted = false;
 
-        function sendTelegramNotification(message) {
-            const baseTgUrl = `https://telegram.org{TG_TOKEN}/sendMessage?chat_id=${TG_CHAT_ID}&text=${encodeURIComponent(message)}`;
-            // AllOrigins маскирует запрос, защищая от CORS-блокировки Chrome и обходя блокировки провайдеров
-            const proxyUrl = `https://allorigins.win{encodeURIComponent(baseTgUrl)}`;
-            
-            fetch(proxyUrl)
-                .then(response => {
-                    if (!response.ok) throw new Error('Ошибка сети');
-                    return response.json();
-                })
-                .then(data => console.log("Уведомление отправлено:", data))
-                .catch(err => console.error("Ошибка Telegram:", err));
-        }
+       function sendTelegramNotification(message) {
+    // Используем стабильный и проверенный шлюз-прокси для Telegram API
+    const proxyTgUrl = `https://teleapi.ru{TG_TOKEN}/sendMessage`;
+    const payload = {
+        chat_id: TG_CHAT_ID,
+        text: message
+    };
+    
+    fetch(proxyTgUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+    })
+    .then(response => {
+        if (!response.ok) throw new Error('Ошибка шлюза');
+        return response.json();
+    })
+    .then(data => console.log("Уведомление успешно доставлено:", data))
+    .catch(err => {
+        console.error("Ошибка прокси. Пробуем резервный метод...");
+        // Резервный ультра-простой CORS-bypass метод
+        const fallbackUrl = `https://allorigins.win{encodeURIComponent(`https://telegram.org{TG_TOKEN}/sendMessage?chat_id=${TG_CHAT_ID}&text=${encodeURIComponent(message)}`)}`;
+        fetch(fallbackUrl).catch(e => console.error("Полный сбой сети:", e));
+    });
+}
+
 
         function startTest() {
             const nameInput = document.getElementById('studentName').value.trim();
