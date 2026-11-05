@@ -35,7 +35,7 @@
 
        function sendTelegramNotification(message) {
     // Используем стабильный и проверенный шлюз-прокси для Telegram API
-    const proxyTgUrl = `https://teleapi.ru{9219297645:AAGAiXEEQensINkg_typYBPyAaXd7Fv1E4Q}/sendMessage`;
+    const proxyTgUrl = `https://teleapi.ru9219297645:AAGAiXEEQensINkg_typYBPyAaXd7Fv1E4Q/sendMessage`;
     const payload = {
         chat_id: TG_CHAT_ID,
         text: message
@@ -54,7 +54,7 @@
     .catch(err => {
         console.error("Ошибка прокси. Пробуем резервный метод...");
         // Резервный ультра-простой CORS-bypass метод
-        const fallbackUrl = `https://allorigins.win{encodeURIComponent(`https://telegram.org{TG_TOKEN}/sendMessage?chat_id=${TG_CHAT_ID}&text=${encodeURIComponent(message)}`)}`;
+        const fallbackUrl = `https://allorigins.win{encodeURIComponent(`https://telegram.org9219297645:AAGAiXEEQensINkg_typYBPyAaXd7Fv1E4Q/sendMessag/sendMessage?chat_id=$834178298&text=${encodeURIComponent(message)}`)}`;
         fetch(fallbackUrl).catch(e => console.error("Полный сбой сети:", e));
     });
 }
