@@ -33,17 +33,21 @@
         let student = "";
         let testStarted = false;
 
-        function sendTelegramNotification(message) {
-            // Исправлен URL-адрес и добавлены обратные кавычки для работы переменных
-            const url = `https://telegram.org{TG_TOKEN}/sendMessage`;
-            const payload = { chat_id: TG_CHAT_ID, text: message };
-            
-            fetch(url, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            }).catch(err => console.error("Ошибка отправки в TG:", err));
-        }
+     function sendTelegramNotification(message) {
+    // Используем прокси для обхода блокировок api.telegram.org
+    const url = `https://allorigins.win{encodeURIComponent(`https://telegram.org{TG_TOKEN}/sendMessage?chat_id=${TG_CHAT_ID}&text=${encodeURIComponent(message)}`)}`;
+    
+    fetch(url)
+        .then(response => {
+            if (response.ok) return response.json();
+            throw new Error('Ошибка сети');
+        })
+        .then(data => {
+            console.log("Ответ сервера:", data);
+        })
+        .catch(err => console.error("Ошибка отправки в TG через прокси:", err));
+}
+
 
         function startTest() {
             const nameInput = document.getElementById('studentName').value.trim();
