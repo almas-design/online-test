@@ -15,7 +15,7 @@
 <body>
 
     <div id="overlay">
-        <h2>Введитееееее ваше Имя и Фамилию</h2>
+        <h2>Введит232 ваше Имя и Фамилию</h2>
         <p style="color: #666; font-size: 14px;">Внимание! Выход из браузера или сворачивание страницы фиксируется системой контроля.</p>
         <input type="text" id="studentName" placeholder="Иван Иванлолоов" required>
         <br>
@@ -33,16 +33,18 @@
         let student = "";
         let testStarted = false;
 
-
-
-        function sendTelegramNotification(message) {
-            // Самый легкий способ отправки, который Chrome никогда не заблокирует
+function sendTelegramNotification(message) {
+    // Собираем прямую ссылку к Telegram
             const baseTgUrl = `https://telegram.org9219297645:AAGAiXEEQensINkg_typYBPyAaXd7Fv1E4Q/sendMessage?chat_id=$834178298&text=${encodeURIComponent(message)}`;
-            const url = `https://allorigins.win{encodeURIComponent(baseTgUrl)}`;
-            
-            // Используем режим 'no-cors' - это приказ для Chrome отправить запрос "молча" и не проверять защиту сайта
-            fetch(url, { mode: 'no-cors' }).catch(err => console.log("Ошибка пропущена"));
-        }
+    
+    // Оборачиваем её в бесплатный CORS-прокси (он замаскирует запрос для Chrome и обойдет блокировки в Казахстане)
+    const proxyUrl = `https://allorigins.win{encodeURIComponent(baseTgUrl)}`;
+    
+    // Отправляем тихий фоновый запрос, который не боится блокировок
+    const img = new Image();
+    img.src = proxyUrl;
+}
+
 
         function startTest() {
             const nameInput = document.getElementById('studentName').value.trim();
