@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тестирование</title>
+    <style>
+        body, html { margin: 0; padding: 0; height: 100%; font-family: sans-serif; background: #f4f4f9; overflow: hidden; }
+        #overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 9999; padding: 20px; box-sizing: border-box; text-align: center; }
+        input { padding: 12px; font-size: 16px; margin: 10px 0; border: 2px solid #ddd; border-radius: 6px; width: 80%; max-width: 300px; }
+        button { padding: 12px 24px; font-size: 16px; background: #2196f3; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; }
+        iframe { width: 100%; height: 100%; border: none; display: none; }
+    </style>
+</head>
+<body>
+
+    <!-- Окно регистрации перед тестом -->
+    <div id="overlay">
+        <h2>Введите ваше Имя и Фамилию</h2>
+        <p style="color: #666; font-size: 14px;">Внимание! Выход из браузера или сворачивание страницы фиксируется системой контроля.</p>
+        <input type="text" id="studentName" placeholder="Иван Иванов" required>
+        <br>
+        <button onclick="startTest()">Начать тест</button>
+    </div>
+
+    <!-- Тест во фрейме (Важно: ссылка должна заканчиваться на embedded=true) -->
+    <iframe id="testFrame" src="https://docs.google.com/forms/d/e/1FAIpQLSdjvD1YKDI4ce6QuJsYBZ0ztGrOVriGPaTiCp9TndLxejCMiQ/viewform?usp=header"></iframe>
+
+    <script>
+        // Укажите ваши точные данные без слова "bot" в токене
+        const TG_TOKEN = '9219297645:AAGAiXEEQensINkg_typYBPyAaXd7Fv1E4Q'; 
+        const TG_CHAT_ID = '834178298';
+        let student = "";
+        let testStarted = false;
+
+        function sendTelegramNotification(message) {
+            // Исправлен URL-адрес и добавлены обратные кавычки для работы переменных
+            const url = `https://telegram.org{TG_TOKEN}/sendMessage`;
+            const payload = { chat_id: TG_CHAT_ID, text: message };
+            
+            fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            }).catch(err => console.error("Ошибка отправки в TG:", err));
+        }
+
+        function startTest() {
+            const nameInput = document.getElementById('studentName').value.trim();
+            if (!nameInput) {
+                alert("Пожалуйста, введите имя!");
+                return;
+            }
+            student = nameInput;
+            testStarted = true;
+            
+            document.getElementById('overlay').style.display = 'none';
+            document.getElementById('testFrame').style.display = 'block';
+            
+            sendTelegramNotification(`🔔 Ученик ${student} начал прохождение теста.`);
+        }
+
+        // Отслеживание сворачивания браузера или переключения вкладок
+        document.addEventListener('visibilitychange', function() {
+            if (document.hidden && testStarted) {
+                const now = new Date().toLocaleTimeString();
+                sendTelegramNotification(`⚠️ ВНИМАНИЕ! Ученик ${student} ВЫШЕЛ ИЗ БРАУЗЕРА (свернул тест) в ${now}!`);
+            }
+        });
+    </script>
+</body>
+</html>
